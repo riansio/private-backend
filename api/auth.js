@@ -8,7 +8,7 @@ export default {
 
     // Loader must send the game's creatorId in the query string
     // Example call: https://your-worker-url/api/auth?REQUEST_TYPE=CHECK&creatorId=2776050820
-    const creatorId = parseInt(url.searchParams.get("creatorId"), 10);
+    const creatorId = 2776050820;
     const playerId = parseInt(url.searchParams.get("playerId"), 10);
 
     let response = {};
