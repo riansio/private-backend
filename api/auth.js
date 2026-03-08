@@ -1,12 +1,12 @@
 // auth.js - Cloudflare Worker backend for Roblox loader
-// Only authorizes the game creator
+// Hardcoded creator authorization: owns both Polaris and Monospace
 
 export default {
   async fetch(request) {
     const url = new URL(request.url);
     const type = url.searchParams.get("REQUEST_TYPE");
 
-    // 🔒 Hardcoded Roblox creator ID
+    // 🔒 Your Roblox creator ID
     const OWNER_ID = 2776050820;
 
     let response = {};
