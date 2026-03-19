@@ -1,56 +1,50 @@
-// auth.js - Cloudflare Worker backend for Roblox loader
-// Hardcoded creator authorization: owns both Polaris and Monospace
-
+// auth.js - Cloudflare Worker
 export default {
-  async fetch(request) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    const type = url.searchParams.get("REQUEST_TYPE");
+    const REQUEST_TYPE = url.searchParams.get("REQUEST_TYPE");
+    const SUBJECT_ID = url.searchParams.get("SUBJECT_ID") || "unknown";
+    const SUBJECT_TYPE = url.searchParams.get("SUBJECT_TYPE") || "unspecified";
 
-    // 🔒 Your Roblox creator ID
-    const OWNER_ID = 2776050820;
+    // Helper: consistent JSON headers
+    const headers = { "content-type": "application/json" };
 
-    let response = {};
-
-    if (type === "CHECK") {
-      response = {
+    // Dynamic-looking response
+    if (REQUEST_TYPE === "CHECK") {
+      return new Response(JSON.stringify({
         success: true,
+        subject: {
+          id: SUBJECT_ID,
+          type: SUBJECT_TYPE
+        },
         productsOwned: {
           monospace0: true,
           polaris0: true
         },
-        WHITELIST: [true, [
-          {
-            TYPE: "CREATOR",
-            ID: OWNER_ID,
-            ID_TYPE: "User"
-          }
-        ]],
-        BLACKLIST: [false, []]
-      };
+        error: "None"
+      }), { headers });
     }
 
-    else if (type === "CHECK_BLACKLIST") {
-      response = {
+    if (REQUEST_TYPE === "CHECK_BLACKLIST") {
+      return new Response(JSON.stringify({
         enabled: false,
         reason: "None",
         level: 0,
-        WHITELIST: [true, [
-          {
-            TYPE: "CREATOR",
-            ID: OWNER_ID,
-            ID_TYPE: "User"
-          }
-        ]],
-        BLACKLIST: [false, []]
-      };
+        subject: {
+          id: SUBJECT_ID,
+          type: SUBJECT_TYPE
+        }
+      }), { headers });
     }
 
-    else {
-      response = { error: "Invalid REQUEST_TYPE" };
-    }
-
-    return new Response(JSON.stringify(response), {
-      headers: { "Content-Type": "application/json" }
-    });
+    // Default fallback for invalid requests
+    return new Response(JSON.stringify({
+      success: false,
+      error: "Invalid REQUEST_TYPE",
+      subject: {
+        id: SUBJECT_ID,
+        type: SUBJECT_TYPE
+      }
+    }), { headers });
   }
 };
