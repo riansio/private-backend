@@ -11,7 +11,8 @@ export default {
         success: true,
         productsOwned: {
           monospace0: true,
-          polaris0: true
+          polaris0: true,
+          POLARIS_SYSTEM: true
         },
         error: "None"
       }), { headers });
@@ -25,7 +26,7 @@ export default {
       }), { headers });
     }
 
-    // Default fallback
+    // Default fallback for invalid requests
     return new Response(JSON.stringify({
       success: false,
       error: "Invalid REQUEST_TYPE"
